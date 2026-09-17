@@ -6,6 +6,7 @@ package org.firstinspires.ftc.teamcode.indivstuff;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
@@ -25,8 +26,8 @@ public class testmecanum {
         //motors
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
+        backRight.setDirection(DcMotor.Direction.REVERSE);
         //motors
         frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -38,10 +39,12 @@ public class testmecanum {
 
         RevHubOrientationOnRobot revOrientation = new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT);
+                RevHubOrientationOnRobot.UsbFacingDirection.LEFT);
 
         imu.initialize(new IMU.Parameters(revOrientation));
     }
+
+
     //robot oriented first, will be corrected to field oriented after
     public void drive(double forward, double strafe, double rotate){
         double frontLeftPower = forward + strafe + rotate;
@@ -50,16 +53,17 @@ public class testmecanum {
         double backRightPower = forward + strafe - rotate;
 
         double maxPower = 1.0;
+        double maxSpeed = 1.0;
 
         maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
         maxPower = Math.max(maxPower, Math.abs(backLeftPower));
         maxPower = Math.max(maxPower, Math.abs(frontRightPower));
         maxPower = Math.max(maxPower, Math.abs(backRightPower));
 
-        frontLeft.setPower(frontLeftPower/maxPower);
-        backLeft.setPower(backLeftPower/maxPower);
-        frontRight.setPower(frontRightPower/maxPower);
-        backRight.setPower(backRightPower/maxPower);
+        frontLeft.setPower(maxSpeed * (frontLeftPower / maxPower));
+        frontRight.setPower(maxSpeed * (frontRightPower / maxPower));
+        backLeft.setPower(maxSpeed * (backLeftPower / maxPower));
+        backRight.setPower(maxSpeed * (backRightPower / maxPower));
     }
 
     public void fieldOriented(double forward, double strafe, double rotate) {
